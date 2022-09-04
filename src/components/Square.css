@@ -1,0 +1,21 @@
+.board{
+    text-align: center; 
+    /* margin-top: 2%; */
+}
+
+.square {
+    background: #000;
+    border: 1px solid #fff; 
+    width: 90px;
+    height: 90px; 
+    margin:2px; 
+     
+  }
+  
+  .square:focus {
+    outline: none;
+  }
+  
+  .kbd-navigation .square:focus {
+    background: #ddd;
+  }
