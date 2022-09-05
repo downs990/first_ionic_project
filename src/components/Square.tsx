@@ -19,8 +19,6 @@ function updateGUI(n: any, clickedList: any, onClickMe: any) {
 
 
 
-
-
 const Square: React.FC<SquareProps> = ({ number, clickedList, onClickMe }) => {
  
     var clicked = clickedList[number];
