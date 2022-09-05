@@ -1,115 +1,140 @@
-import React, {Component} from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react'; 
+import React, { Component } from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import Square from '../components/Square';
 import './Home.css';
- 
- 
-class Home extends Component{
-
-  state: any = {};
-  props: any = {};
-
-  constructor(props:any){
-    // TODO: What should parent props come from?
-    super(props);
 
 
-
-    var listOfPatterns = this.generateListOfPatterns(100);
-    var firstPattern = this.convertIndexesToClickedList(listOfPatterns[0]);
-
-    this.state = {
-
-      clickedList:firstPattern,
-
-      allPatterns: listOfPatterns,
-
-      lastDisplayedPatternIndex: 0,
-       
-      playerScore: 0
-    }
  
 
-    console.log(listOfPatterns[0]);
+class Home extends Component {
 
+  // state: any = {};
+  // props: any = {};
+  
+  // constructor(props: any) {
+  // TODO: What should parent props come from?
+  // super(props);
+
+  // this.state = {
+
+  //   clickedList: [],
+  //   allPatterns: [],
+  //   lastDisplayedPatternIndex: 0,
+  //   playerScore: 0
+  // }
+
+  // }
+
+
+  state: any = {
+
+    clickedList: [],
+
+    allPatterns: [],
+
+    lastDisplayedPatternIndex: 0,
+
+    playerScore: 0
   }
 
-  convertIndexesToClickedList = (arrayOfIndexes: any) => {
-    
-    var result = [
-      false,false,false,
-      false,false,false,
-      false,false,false
-    ];
+  clearedBoard : any= [
+    false, false, false,
+    false, false, false,
+    false, false, false
+  ];
+   
 
-    for(let i = 0; i < arrayOfIndexes.length; i++){
-      result[ arrayOfIndexes[i] ] = true;
+  convertIndexesToClickedList = (arrayOfIndexes: any) => {
+
+    var result = [...this.clearedBoard]; // Deep copy clearedBoard
+
+    for (let i = 0; i < arrayOfIndexes.length; i++) {
+      result[arrayOfIndexes[i]] = true;
     }
 
     return result;
   }
 
 
-  // TODO: Update logic to remove duplicates 
-  generateListOfPatterns = (numOfPatterns: any) => {
-
-    var listOfBoards = [];
-
-    var numOfBoards = numOfPatterns;
-    for(let i = 0; i < numOfBoards; i++){
-      
-        var numOfSquares = 1 + Math.floor(Math.random() * 4); // 1 - 5 (both inclusive)
-        
-        var currentBoard = [];
-        for(let j = 0; j < numOfSquares; j++){
-            var indexOfSquare = Math.floor(Math.random() * 10); // 0 - 9 (both inclusive)
-            currentBoard.push(indexOfSquare);
-        }
-        listOfBoards.push(currentBoard);
-        
-    }
-    
-    return listOfBoards;
-  }
-
-
 
   onClickMe = (newList: any) => {
-
-        // TODO: Add all state variables when updating ?
-        this.setState({
-          clickedList: newList
-        })
+ 
+    this.setState({
+      clickedList: newList,
+    }) 
   };
+
+
+  // TODO: Update logic to remove duplicates 
+  updateBoardState = (newList: any, newPattern: any) => {
+    var existingPatterns = this.state.allPatterns;
+    existingPatterns.push(newPattern);
+
+    this.setState({
+      clickedList: newList,
+      allPatterns: existingPatterns
+    }, 
+    
+    
+    // Function pointer to the future from the promise of .setState()
+    ()=>{
+
+      setTimeout(()=>{
+
+        this.setState({
+          clickedList: this.clearedBoard
+        })
+      }, 1000);
+      
+    })
+
+  }
 
 
   displayNewBoard = () => {
 
-      // 1. Generate a board 
-      var currentBoard = [];
-      var numOfSquares = 1 + Math.floor(Math.random() * 4); // 1 - 5 (both inclusive)
-      for(let j = 0; j < numOfSquares; j++){
-          var indexOfSquare = Math.floor(Math.random() * 10); // 0 - 9 (both inclusive)
-          currentBoard.push(indexOfSquare);
-      }
 
-      // 2. Convert to clickedMap
-      var clickedMap = this.convertIndexesToClickedList(currentBoard);
+    var currentBoard = [];
+    // 1. Generate a board 
 
-      // 3. Update interface 
-      this.onClickMe(clickedMap);
+    var numOfSquares = 1 + Math.floor(Math.random() * 4); // 1 - 5 (both inclusive)
+    for (let j = 0; j < numOfSquares; j++) {
+      var indexOfSquare = Math.floor(Math.random() * 10); // 0 - 9 (both inclusive)
+      currentBoard.push(indexOfSquare);
+    }
 
+
+    var clickedMap = []; 
+
+    // 2. Convert to clickedMap
+    clickedMap = this.convertIndexesToClickedList(currentBoard);
  
+
+    // 3. Update interface 
+    this.updateBoardState(clickedMap, currentBoard);
 
   }
 
 
-  render(){
+  componentDidMount(){
 
-    setTimeout(this.displayNewBoard, 1000);
- 
-    return(
-      <IonPage> 
+    setInterval(this.displayNewBoard, 2000);
+    // console.log(this.state)
+     
+         
+  }
+
+
+  render() {
+
+    // 4. Black out screen
+    // setTimeout(this.displayNewBoard, 2000);
+    console.log(this.state)
+    
+
+
+    return (
+      <IonPage>
         <IonHeader>
           <IonToolbar>
             <IonTitle>Blank</IonTitle>
@@ -121,17 +146,17 @@ class Home extends Component{
               <IonTitle size="large">Blank</IonTitle>
             </IonToolbar>
           </IonHeader>
-  
-     
-  
+
+
+
           <div className="score">
-            <p style={{fontSize:40, textAlign:'center', marginTop:'10%'}}>Score: 0000</p>  
+            <p style={{ fontSize: 40, textAlign: 'center', marginTop: '10%' }}>Score: 0000</p>
           </div>
-  
-  
+
+
           <div className="board">
-            <div> 
-              
+            <div>
+
               <Square number={0} clickedList={this.state.clickedList} onClickMe={this.onClickMe} />
               <Square number={1} clickedList={this.state.clickedList} onClickMe={this.onClickMe} />
               <Square number={2} clickedList={this.state.clickedList} onClickMe={this.onClickMe} />
@@ -146,14 +171,13 @@ class Home extends Component{
               <Square number={7} clickedList={this.state.clickedList} onClickMe={this.onClickMe} />
               <Square number={8} clickedList={this.state.clickedList} onClickMe={this.onClickMe} />
             </div>
-          </div> 
-  
-  
+          </div>
+
+
         </IonContent>
       </IonPage>
     );
 
   }
 
-};export default Home;
- 
+}; export default Home;
