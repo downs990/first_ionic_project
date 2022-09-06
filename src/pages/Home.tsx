@@ -4,13 +4,13 @@ import Square from '../components/Square';
 import './Home.css';
 
 
- 
+
 
 class Home extends Component {
 
   // state: any = {};
   // props: any = {};
-  
+
   // constructor(props: any) {
   // TODO: What should parent props come from?
   // super(props);
@@ -18,8 +18,7 @@ class Home extends Component {
   // this.state = {
 
   //   clickedList: [],
-  //   allPatterns: [],
-  //   lastDisplayedPatternIndex: 0,
+  //   allPatterns: [], 
   //   playerScore: 0
   // }
 
@@ -30,19 +29,24 @@ class Home extends Component {
 
     clickedList: [],
 
-    allPatterns: [],
+    allPatterns: [],  // TODO: Why no make this a normal member variable ?
 
-    lastDisplayedPatternIndex: 0,
+    playerScore: 0,
 
-    playerScore: 0
+    successfulUserPatterns: 0,
+
   }
 
-  clearedBoard : any= [
+  clearedBoard: any = [
     false, false, false,
     false, false, false,
     false, false, false
   ];
-   
+
+  interval: any;
+  intervalCount: any = 0;
+
+  isIntervalRunning: any = true;
 
   convertIndexesToClickedList = (arrayOfIndexes: any) => {
 
@@ -56,81 +60,133 @@ class Home extends Component {
   }
 
 
+  checkUserInput = (newList: any) => {
+    // Check solution entered
+    var clicks = 0;
+    for (let i = 0; i < newList.length; i++) {
+
+      if (newList[i] == true) {
+        clicks = clicks + 1;
+
+
+        var currentSolvingPattern = this.state.allPatterns[this.state.successfulUserPatterns ];
+        if (currentSolvingPattern.includes(i) == false) {
+          console.log("Game Over!");
+        } else {
+          if (clicks == currentSolvingPattern.length) {
+
+            console.log("Correct!")
+
+            this.intervalCount = this.intervalCount + 1;
+            this.setState({
+              successfulUserPatterns: this.state.successfulUserPatterns + 1,
+            }, () => {
+
+              // Un-pause this.interval 
+              this.interval = setInterval(this.displayNewBoard, 2000); 
+              this.isIntervalRunning = true;
+
+              // TODO: Either use setInterval() or this.isIntervalRunning = true
+              //       you don't need both. (i.e, remove isIntervalRunning)
+            })
+
+          } 
+        }
+      }
+
+    }
+  }
+
 
   onClickMe = (newList: any) => {
- 
+
     this.setState({
       clickedList: newList,
-    }) 
+    })
+
+    this.checkUserInput(newList);
+
+
   };
 
 
-  // TODO: Update logic to remove duplicates 
+
   updateBoardState = (newList: any, newPattern: any) => {
-    var existingPatterns = this.state.allPatterns;
-    existingPatterns.push(newPattern);
+
+    var existingPatterns = this.state.allPatterns; 
+    existingPatterns.push(newPattern); 
+    
+
 
     this.setState({
       clickedList: newList,
       allPatterns: existingPatterns
-    }, 
-    
-    
-    // Function pointer to the future from the promise of .setState()
-    ()=>{
+    },
+      // Function pointer to the future from the promise of .setState()
+      () => {
 
-      setTimeout(()=>{
+        setTimeout(() => {
+  
+          this.setState({
+            clickedList: this.clearedBoard
+          })
+        }, 1000);
 
-        this.setState({
-          clickedList: this.clearedBoard
-        })
-      }, 1000);
-      
-    })
+        
+
+        if (this.intervalCount == this.state.successfulUserPatterns) {
+          // clearInterval(this.interval);
+          this.isIntervalRunning = false;
+        } 
+
+        
+
+      })
 
   }
 
 
   displayNewBoard = () => {
 
+    if (this.isIntervalRunning) {
 
-    var currentBoard = [];
-    // 1. Generate a board 
+      var currentBoard = [];
+      // 1. Generate a board 
 
-    var numOfSquares = 1 + Math.floor(Math.random() * 4); // 1 - 5 (both inclusive)
-    for (let j = 0; j < numOfSquares; j++) {
-      var indexOfSquare = Math.floor(Math.random() * 10); // 0 - 9 (both inclusive)
-      currentBoard.push(indexOfSquare);
-    }
+      var numOfSquares = 1 + Math.floor(Math.random() * 4); // 1 - 5 (both inclusive)
+      for (let j = 0; j < numOfSquares; j++) {
+        var indexOfSquare = Math.floor(Math.random() * 9); // 0 - 8 (both inclusive)
 
 
-    var clickedMap = []; 
+        // Prevent duplicates 
+        if (currentBoard.includes(indexOfSquare) === false) {
+          currentBoard.push(indexOfSquare);
+        }
 
-    // 2. Convert to clickedMap
-    clickedMap = this.convertIndexesToClickedList(currentBoard);
+      }
  
 
-    // 3. Update interface 
-    this.updateBoardState(clickedMap, currentBoard);
+      var clickedMap = [];
 
+      // 2. Convert to clickedMap
+      clickedMap = this.convertIndexesToClickedList(currentBoard);
+
+
+      // 3. Update interface 
+      this.updateBoardState(clickedMap, currentBoard);
+    }
   }
 
 
-  componentDidMount(){
-
-    setInterval(this.displayNewBoard, 2000);
-    // console.log(this.state)
-     
-         
-  }
 
 
   render() {
 
     // 4. Black out screen
     // setTimeout(this.displayNewBoard, 2000);
-    console.log(this.state)
-    
+    // this.displayNewBoard();
+    console.log(this.state.allPatterns)
+
 
 
     return (
@@ -179,5 +235,21 @@ class Home extends Component {
     );
 
   }
+
+
+  componentDidMount() {
+    this.interval = setInterval(this.displayNewBoard, 2000);
+
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  componentDidUpdate() {
+    console.log(this.intervalCount);
+
+  }
+
 
 }; export default Home;
