@@ -77,19 +77,24 @@ class Home extends Component {
 
             console.log("Correct!")
 
-            this.intervalCount = this.intervalCount + 1;
+            this.intervalCount = this.intervalCount + 1;  
             this.setState({
+              clickedList: [...this.clearedBoard],
               successfulUserPatterns: this.state.successfulUserPatterns + 1,
+              playerScore: this.state.playerScore + 100
             }, () => {
 
-              // Un-pause this.interval 
+              // Un-pause this.interval  
               this.interval = setInterval(this.displayNewBoard, 2000); 
               this.isIntervalRunning = true;
 
               // TODO: Either use setInterval() or this.isIntervalRunning = true
               //       you don't need both. (i.e, remove isIntervalRunning)
+           
             })
 
+
+            console.log(this.state);
           } 
         }
       }
@@ -128,9 +133,9 @@ class Home extends Component {
         setTimeout(() => {
   
           this.setState({
-            clickedList: this.clearedBoard
+            clickedList: [...this.clearedBoard]
           })
-        }, 1000);
+        }, 1000); 
 
         
 
@@ -206,7 +211,7 @@ class Home extends Component {
 
 
           <div className="score">
-            <p style={{ fontSize: 40, textAlign: 'center', marginTop: '10%' }}>Score: 0000</p>
+            <p style={{ fontSize: 40, textAlign: 'center', marginTop: '10%' }}>Score: {this.state.playerScore}</p>
           </div>
 
 
