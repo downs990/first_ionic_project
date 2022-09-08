@@ -29,12 +29,9 @@ class Home extends Component {
 
     clickedList: [],
 
-    allPatterns: [],  // TODO: Why no make this a normal member variable ?
+    allPatterns: [],   
 
-    playerScore: 0,
-
-    successfulUserPatterns: 0,
-
+     
   }
 
   clearedBoard: any = [
@@ -44,9 +41,13 @@ class Home extends Component {
   ];
 
   interval: any;
-  intervalCount: any = 0;
+  currentIntervalIndex: any = 0;
+  isIntervalRunning: any = true; 
 
-  isIntervalRunning: any = true;
+
+  intervalsToShow = 1;
+  playerScore = 0;
+ 
 
   convertIndexesToClickedList = (arrayOfIndexes: any) => {
 
@@ -69,33 +70,45 @@ class Home extends Component {
         clicks = clicks + 1;
 
 
-        var currentSolvingPattern = this.state.allPatterns[this.state.successfulUserPatterns ];
+        var currentSolvingPattern = this.state.allPatterns[this.currentIntervalIndex];
+ 
+
         if (currentSolvingPattern.includes(i) == false) {
           console.log("Game Over!");
         } else {
+
+          // Check if current pattern is solved.
           if (clicks == currentSolvingPattern.length) {
 
-            console.log("Correct!")
 
-            this.intervalCount = this.intervalCount + 1;  
+            this.currentIntervalIndex = this.currentIntervalIndex + 1;
+
             this.setState({
-              clickedList: [...this.clearedBoard],
-              successfulUserPatterns: this.state.successfulUserPatterns + 1,
-              playerScore: this.state.playerScore + 100
+              clickedList: [...this.clearedBoard]
             }, () => {
 
-              // Un-pause this.interval  
-              this.interval = setInterval(this.displayNewBoard, 2000); 
-              this.isIntervalRunning = true;
+              // Check if currentSolvingPattern is the last one that was generated
+              if (this.currentIntervalIndex == this.intervalsToShow) {
 
-              // TODO: Either use setInterval() or this.isIntervalRunning = true
-              //       you don't need both. (i.e, remove isIntervalRunning)
-           
+
+                console.log("Correct!");
+                this.currentIntervalIndex = 0;
+                this.intervalsToShow += 1;
+                this.playerScore +=  100;
+                
+
+                // Un-pause this.interval  
+                // this.interval = setInterval(this.displayNewBoard, 2000);
+                this.isIntervalRunning = true;// TODO: Either use setInterval() or this.isIntervalRunning = true  you don't need both. (i.e, remove isIntervalRunning)
+
+              }  
+
+
             })
 
 
             console.log(this.state);
-          } 
+          }
         }
       }
 
@@ -118,9 +131,15 @@ class Home extends Component {
 
   updateBoardState = (newList: any, newPattern: any) => {
 
-    var existingPatterns = this.state.allPatterns; 
-    existingPatterns.push(newPattern); 
-    
+    var existingPatterns = this.state.allPatterns;
+
+    // Only push new pattern if new pattern was generated.
+    if(this.currentIntervalIndex == this.intervalsToShow - 1){
+      existingPatterns.push(newPattern);
+    }
+      
+     
+
 
 
     this.setState({
@@ -131,20 +150,30 @@ class Home extends Component {
       () => {
 
         setTimeout(() => {
-  
+
           this.setState({
             clickedList: [...this.clearedBoard]
-          })
-        }, 1000); 
+          },
 
-        
+            () => {
+              this.currentIntervalIndex = this.currentIntervalIndex + 1;
 
-        if (this.intervalCount == this.state.successfulUserPatterns) {
-          // clearInterval(this.interval);
-          this.isIntervalRunning = false;
-        } 
+              if (this.currentIntervalIndex == this.intervalsToShow) {
+                // clearInterval(this.interval);
+                this.currentIntervalIndex = 0;
+                this.isIntervalRunning = false;
+              }
 
-        
+            }
+
+          )
+
+
+        }, 1000);
+
+
+
+
 
       })
 
@@ -155,21 +184,29 @@ class Home extends Component {
 
     if (this.isIntervalRunning) {
 
+
       var currentBoard = [];
-      // 1. Generate a board 
+      
+      if(this.currentIntervalIndex < (this.intervalsToShow - 1)  && this.state.allPatterns.length != 0){ // generate a pattern for first round when allPatterns.length == 0
+        
+        // Display existing pattern 
+        currentBoard = this.state.allPatterns[this.currentIntervalIndex ];
 
-      var numOfSquares = 1 + Math.floor(Math.random() * 4); // 1 - 5 (both inclusive)
-      for (let j = 0; j < numOfSquares; j++) {
-        var indexOfSquare = Math.floor(Math.random() * 9); // 0 - 8 (both inclusive)
+      } else { 
+        // Generate new pattern 
 
+        var numOfSquares = 1 + Math.floor(Math.random() * 4);   // 1 - 5 (both inclusive)
+        for (let j = 0; j < numOfSquares; j++) {
+          var indexOfSquare = Math.floor(Math.random() * 9);    // 0 - 8 (both inclusive)
 
-        // Prevent duplicates 
-        if (currentBoard.includes(indexOfSquare) === false) {
-          currentBoard.push(indexOfSquare);
-        }
-
+          if (currentBoard.includes(indexOfSquare) === false) { // Prevent duplicates 
+            currentBoard.push(indexOfSquare);
+          }
+        } 
       }
- 
+       
+      
+
 
       var clickedMap = [];
 
@@ -187,12 +224,7 @@ class Home extends Component {
 
   render() {
 
-    // 4. Black out screen
-    // setTimeout(this.displayNewBoard, 2000);
-    // this.displayNewBoard();
     console.log(this.state.allPatterns)
-
-
 
     return (
       <IonPage>
@@ -211,7 +243,7 @@ class Home extends Component {
 
 
           <div className="score">
-            <p style={{ fontSize: 40, textAlign: 'center', marginTop: '10%' }}>Score: {this.state.playerScore}</p>
+            <p style={{ fontSize: 40, textAlign: 'center', marginTop: '10%' }}>Score: {this.playerScore}</p>
           </div>
 
 
@@ -252,7 +284,7 @@ class Home extends Component {
   }
 
   componentDidUpdate() {
-    console.log(this.intervalCount);
+    console.log(this.currentIntervalIndex);
 
   }
 
