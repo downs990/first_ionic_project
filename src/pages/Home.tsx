@@ -75,6 +75,10 @@ class Home extends Component {
 
         if (currentSolvingPattern.includes(i) == false) {
           console.log("Game Over!");
+
+          // TODO: Clear all variables and show game over message
+          // TODO: Blits mode 
+
         } else {
 
           // Check if current pattern is solved.
@@ -95,11 +99,9 @@ class Home extends Component {
                 this.currentIntervalIndex = 0;
                 this.intervalsToShow += 1;
                 this.playerScore +=  100;
-                
 
-                // Un-pause this.interval  
-                // this.interval = setInterval(this.displayNewBoard, 2000);
-                this.isIntervalRunning = true;// TODO: Either use setInterval() or this.isIntervalRunning = true  you don't need both. (i.e, remove isIntervalRunning)
+                // Un-pause this.interval   
+                this.isIntervalRunning = true;
 
               }  
 
