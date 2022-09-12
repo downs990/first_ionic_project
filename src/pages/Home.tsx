@@ -29,9 +29,9 @@ class Home extends Component {
 
     clickedList: [],
 
-    allPatterns: [],   
+    allPatterns: [],
 
-     
+
   }
 
   clearedBoard: any = [
@@ -42,12 +42,13 @@ class Home extends Component {
 
   interval: any;
   currentIntervalIndex: any = 0;
-  isIntervalRunning: any = true; 
+  isIntervalRunning: any = true;
 
 
   intervalsToShow = 1;
   playerScore = 0;
- 
+  gameOver = false;
+
 
   convertIndexesToClickedList = (arrayOfIndexes: any) => {
 
@@ -71,13 +72,15 @@ class Home extends Component {
 
 
         var currentSolvingPattern = this.state.allPatterns[this.currentIntervalIndex];
- 
+
 
         if (currentSolvingPattern.includes(i) == false) {
           console.log("Game Over!");
 
           // TODO: Clear all variables and show game over message
           // TODO: Blits mode 
+          this.gameOver = true;
+
 
         } else {
 
@@ -92,18 +95,18 @@ class Home extends Component {
             }, () => {
 
               // Check if currentSolvingPattern is the last one that was generated
-              if (this.currentIntervalIndex == this.intervalsToShow) {
+              if (this.currentIntervalIndex == this.intervalsToShow && this.gameOver == false) {
 
 
                 console.log("Correct!");
                 this.currentIntervalIndex = 0;
                 this.intervalsToShow += 1;
-                this.playerScore +=  100;
+                this.playerScore += 100;
 
                 // Un-pause this.interval   
                 this.isIntervalRunning = true;
 
-              }  
+              }
 
 
             })
@@ -120,13 +123,15 @@ class Home extends Component {
 
   onClickMe = (newList: any) => {
 
-    this.setState({
-      clickedList: newList,
-    })
+    if (this.gameOver == false) {
 
-    this.checkUserInput(newList);
+      this.setState({
+        clickedList: newList,
+      })
 
+      this.checkUserInput(newList);
 
+    }
   };
 
 
@@ -136,11 +141,11 @@ class Home extends Component {
     var existingPatterns = this.state.allPatterns;
 
     // Only push new pattern if new pattern was generated.
-    if(this.currentIntervalIndex == this.intervalsToShow - 1){
+    if (this.currentIntervalIndex == this.intervalsToShow - 1) {
       existingPatterns.push(newPattern);
     }
-      
-     
+
+
 
 
 
@@ -188,13 +193,13 @@ class Home extends Component {
 
 
       var currentBoard = [];
-      
-      if(this.currentIntervalIndex < (this.intervalsToShow - 1)  && this.state.allPatterns.length != 0){ // generate a pattern for first round when allPatterns.length == 0
-        
-        // Display existing pattern 
-        currentBoard = this.state.allPatterns[this.currentIntervalIndex ];
 
-      } else { 
+      if (this.currentIntervalIndex < (this.intervalsToShow - 1) && this.state.allPatterns.length != 0) { // generate a pattern for first round when allPatterns.length == 0
+
+        // Display existing pattern 
+        currentBoard = this.state.allPatterns[this.currentIntervalIndex];
+
+      } else {
         // Generate new pattern 
 
         var numOfSquares = 1 + Math.floor(Math.random() * 4);   // 1 - 5 (both inclusive)
@@ -204,10 +209,10 @@ class Home extends Component {
           if (currentBoard.includes(indexOfSquare) === false) { // Prevent duplicates 
             currentBoard.push(indexOfSquare);
           }
-        } 
+        }
       }
-       
-      
+
+
 
 
       var clickedMap = [];
@@ -223,6 +228,21 @@ class Home extends Component {
 
 
 
+  getLabel = () => {
+    if(this.gameOver){
+      return "Game Over!"  
+    }else{
+      return "Score: " + this.playerScore
+    }
+  }
+
+  showBottomScore = () => {
+    if(this.gameOver){
+      return "Score: " + this.playerScore
+    }else{
+      return ""
+    }
+  }
 
   render() {
 
@@ -244,8 +264,10 @@ class Home extends Component {
 
 
 
-          <div className="score">
-            <p style={{ fontSize: 40, textAlign: 'center', marginTop: '10%' }}>Score: {this.playerScore}</p>
+          <div className="score"> 
+            <p style={{ fontSize: 40, textAlign: 'center', marginTop: '10%' }}>
+                {this.getLabel() }
+            </p> 
           </div>
 
 
@@ -266,6 +288,12 @@ class Home extends Component {
               <Square number={7} clickedList={this.state.clickedList} onClickMe={this.onClickMe} />
               <Square number={8} clickedList={this.state.clickedList} onClickMe={this.onClickMe} />
             </div>
+          </div>
+
+          <div className="score"> 
+            <p style={{ fontSize: 20, textAlign: 'center', marginTop: '5%' }}>
+                {this.showBottomScore() }
+            </p> 
           </div>
 
 
