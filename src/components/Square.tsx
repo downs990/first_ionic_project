@@ -13,12 +13,11 @@ function updateGUI(n: any, clickedList: any, onClickMe: any) {
     clickedList[n] = !clickedList[n];
     console.log(clickedList)
 
- 
+    
     onClickMe(clickedList); 
 }
 
-
-
+ 
 const Square: React.FC<SquareProps> = ({ number, clickedList, onClickMe }) => {
  
     var clicked = clickedList[number];
@@ -27,8 +26,8 @@ const Square: React.FC<SquareProps> = ({ number, clickedList, onClickMe }) => {
         correctColor = "#fff"
     }
 
-    return (
-
+    return ( 
+        
         <button
             className="square"
             style={{ background: correctColor }} onClick={() => updateGUI(number, clickedList, onClickMe)}>
