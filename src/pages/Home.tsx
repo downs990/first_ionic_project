@@ -166,7 +166,7 @@ class Home extends Component {
     this.checkUserInput()
 
     // Display new board every 2 seconds or so 
-    if (this.isIntervalRunning && this.frames % 25 == 0) {
+    if (this.isIntervalRunning && this.frames % 250 == 0) {
 
 
       var currentBoard = [];
@@ -281,7 +281,7 @@ class Home extends Component {
 
 
   componentDidMount() {
-    this.interval = setInterval(this.displayNewBoard, 100);
+    this.interval = setInterval(this.displayNewBoard, 10);
 
   }
 
