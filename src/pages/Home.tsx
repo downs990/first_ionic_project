@@ -225,59 +225,52 @@ class Home extends Component {
 
   // TODO: how to update toast message ?
   makeToast = (msg: any) => {
-    return (<IonToast isOpen={true} message={"toast: " + msg}  />)
+    return (<IonToast isOpen={true} message={"toast: " + msg} />)
 
   }
 
-  
-  debugMessages = () => {
-    let msg1 = ""
-    let msg2 = ""
- 
-    let t = new Array(9)
-    if(this.state.clickedList.length > 0){ 
 
-          for(let i = 0; i < this.state.clickedList.length; i++){
-             if(this.state.clickedList[i]){
-                t[i] = "true"
-             }else{
-                t[i] = "false"
-             }
-          }
+  debugMessages = () => {
+    
+    let t = new Array(9)
+    if (this.state.clickedList.length > 0) {
+
+      for (let i = 0; i < this.state.clickedList.length; i++) {
+        if (this.state.clickedList[i]) {
+          t[i] = "true"
+        } else {
+          t[i] = "false"
+        }
+      }
     }
 
-    
     let p = []
-    for(let i = 0; i < this.state.allPatterns.length; i++){ 
-      p.push(<div> [ {this.state.allPatterns[i].toString()} ] </div> )
-      
+    for (let i = 0; i < this.state.allPatterns.length; i++) {
+      p.push(<div> [ {this.state.allPatterns[i].toString()} ] </div>)
     }
 
     return (
-    <div>
-      clicked -- <br/> 
-      {t[0]}, {t[1]}, {t[2]}, <br/>
-      {t[3]}, {t[4]}, {t[5]}, <br/>
-      {t[6]}, {t[6]}, {t[7]}, <br/>
+      <div>
+        clicked -- <br />
+        {t[0]}, {t[1]}, {t[2]}, <br />
+        {t[3]}, {t[4]}, {t[5]}, <br />
+        {t[6]}, {t[6]}, {t[7]}, <br />
 
-      <br/>
-      allPatterns -- <br/> 
-      {
-        p
-      } 
-      
-
-    </div>
+        <br />
+        allPatterns -- <br />
+        {
+          p
+        }
+      </div>
     )
-
   }
 
   render() {
 
     console.log(this.state.clickedList)
 
-    
-    let msg = "clicked: " + this.state.clickedList.toString()+ "\n" + this.state.allPatterns.toString()
+
+    let msg = "clicked: " + this.state.clickedList.toString() + "\n" + this.state.allPatterns.toString()
 
 
     return (
@@ -327,11 +320,11 @@ class Home extends Component {
             </p>
           </div>
 
-           
-          { 
 
-              //  this.makeToast(msg)
-              this.debugMessages()
+          {
+
+            //  this.makeToast(msg)
+            this.debugMessages()
           }
 
         </IonContent>
