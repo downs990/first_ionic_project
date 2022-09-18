@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonToast } from '@ionic/react';
 import Square from '../components/Square';
 import './Home.css';
 
@@ -28,7 +28,8 @@ class Home extends Component {
   intervalsToShow = 1;
   playerScore = 0;
   gameOver = false;
-  frames:any = 0
+  frames: any = 0;
+  toastMessage: any = "";
 
 
   convertIndexesToClickedList = (arrayOfIndexes: any) => {
@@ -68,7 +69,7 @@ class Home extends Component {
 
             // Check if current pattern is solved.
             if (clicks == currentSolvingPattern.length) {
-              
+
               this.currentIntervalIndex = this.currentIntervalIndex + 1;
               this.threadSleep()
 
@@ -100,6 +101,8 @@ class Home extends Component {
 
   onClickMe = (newList: any) => {
 
+
+
     if (this.gameOver == false) {
 
       this.setState({
@@ -125,7 +128,7 @@ class Home extends Component {
     this.setState({
       clickedList: newList,
       allPatterns: existingPatterns
-    }, 
+    },
       () => {
 
         setTimeout(() => {
@@ -137,10 +140,10 @@ class Home extends Component {
             () => {
               this.currentIntervalIndex = this.currentIntervalIndex + 1;
 
-              if (this.currentIntervalIndex == this.intervalsToShow) { 
+              if (this.currentIntervalIndex == this.intervalsToShow) {
                 this.currentIntervalIndex = 0;
                 this.isIntervalRunning = false;
-                
+
               }
             }
           )
@@ -198,8 +201,8 @@ class Home extends Component {
       // 3. Update interface 
       this.updateBoardState(clickedMap, currentBoard);
 
-    } 
-    
+    }
+
   }
 
 
@@ -220,9 +223,62 @@ class Home extends Component {
     }
   }
 
+  // TODO: how to update toast message ?
+  makeToast = (msg: any) => {
+    return (<IonToast isOpen={true} message={"toast: " + msg}  />)
+
+  }
+
+  
+  debugMessages = () => {
+    let msg1 = ""
+    let msg2 = ""
+ 
+    let t = new Array(9)
+    if(this.state.clickedList.length > 0){ 
+
+          for(let i = 0; i < this.state.clickedList.length; i++){
+             if(this.state.clickedList[i]){
+                t[i] = "true"
+             }else{
+                t[i] = "false"
+             }
+          }
+    }
+
+    
+    let p = []
+    for(let i = 0; i < this.state.allPatterns.length; i++){ 
+      p.push(<div> [ {this.state.allPatterns[i].toString()} ] </div> )
+      
+    }
+
+    return (
+    <div>
+      clicked -- <br/> 
+      {t[0]}, {t[1]}, {t[2]}, <br/>
+      {t[3]}, {t[4]}, {t[5]}, <br/>
+      {t[6]}, {t[6]}, {t[7]}, <br/>
+
+      <br/>
+      allPatterns -- <br/> 
+      {
+        p
+      } 
+      
+
+    </div>
+    )
+
+  }
+
   render() {
 
-    console.log(this.state.allPatterns)
+    console.log(this.state.clickedList)
+
+    
+    let msg = "clicked: " + this.state.clickedList.toString()+ "\n" + this.state.allPatterns.toString()
+
 
     return (
       <IonPage>
@@ -237,7 +293,6 @@ class Home extends Component {
               <IonTitle size="large">Blank</IonTitle>
             </IonToolbar>
           </IonHeader>
-
 
 
           <div className="score">
@@ -272,6 +327,12 @@ class Home extends Component {
             </p>
           </div>
 
+           
+          { 
+
+              //  this.makeToast(msg)
+              this.debugMessages()
+          }
 
         </IonContent>
       </IonPage>
@@ -292,6 +353,7 @@ class Home extends Component {
 
   componentDidUpdate() {
     console.log(this.currentIntervalIndex);
+
   }
 
 
