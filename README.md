@@ -4,8 +4,9 @@ This is the first application that I've created using the Ionic Capacitor framew
 
 It is also the very first cross-platform / progressive-web-app (PWA) that I've ever created. 
 
-#Video 
-Checkout the YouTube video devlog for this project.
+# Video 
+Checkout the YouTube video devlog for this project. 
+
 https://www.youtube.com/watch?v=C-sWPVyGKtw&t=19s 
 
 
